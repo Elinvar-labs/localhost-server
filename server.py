@@ -1,12 +1,15 @@
 #!/usr/bin/python3
+from http import server
 import os
+import socket
+import netifaces
 from http.server import SimpleHTTPRequestHandler, HTTPServer
+iface = netifaces.gateways()['default'][netifaces.AF_INET][1]
 print("Welcome! This is a simple server on python http.")
 print("Now you must choose parametres of server:")
-address = str(input("Input address: (Default: localhost)\n"))
-port = str(input("Input port: (Dfeault: 8000)\n"))
-if address=="":
-    address = "localhost"
+address = netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['addr']
+port = str(input("Input port: (Default: 8000)\n"))
+
 if port == "":
     port = 8000
 else:
@@ -18,6 +21,7 @@ server_address = (address, port)
 httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
 try:
     print("Server started")
+    print("You can connect to this PC by address:\n"+str(address)+":"+str(port))
     httpd.serve_forever()
 except KeyboardInterrupt:
     httpd.shutdown()
